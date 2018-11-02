@@ -14,6 +14,7 @@ public class Register extends AppCompatActivity {
     EditText username, password, email;
     Button registerBtn;
     String usernameStr, passwordStr, emailStr;
+    AdaptadorDB adaptadorDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,14 +23,17 @@ public class Register extends AppCompatActivity {
         password = findViewById(R.id.new_password);
         email = findViewById(R.id.new_email);
         registerBtn = findViewById(R.id.registerBtn);
-        usernameStr = username.toString();
-        passwordStr = password.toString();
-        emailStr = email.toString();
+        adaptadorDB = new AdaptadorDB(this);
+        adaptadorDB.open();
     }
     public void onClickRegister(View v) {
+        usernameStr = username.getText().toString();
+        passwordStr = password.getText().toString();
+        emailStr = email.getText().toString();
+        adaptadorDB.insertaUsuario(emailStr,usernameStr,passwordStr);
         SharedPreferences sharedPref = getSharedPreferences("crm", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(usernameStr+passwordStr,usernameStr+" "+emailStr);
+        editor.putString("username",emailStr);
         editor.commit();
         Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Register.this,MainActivity.class);

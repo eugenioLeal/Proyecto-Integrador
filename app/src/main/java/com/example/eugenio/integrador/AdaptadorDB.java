@@ -12,18 +12,17 @@ import android.util.Log;
 
 public class AdaptadorDB {
 
-    static final String LLAVE_IDFILA = "_id";
-    static final String  LLAVE_USERNAME = "username";
     static final String  LLAVE_EMAIL = "email";
+    static final String  LLAVE_USUARIO = "usuario";
+    static final String  LLAVE_PASSWORD = "password";
     static final String ETIQUETA = "AdaptadorDB";
-
-    static final String NOMBRE_BD = "";
-    static final String BD_TABLA = "";
+    static final String NOMBRE_BD = "usuarios";
+    static final String BD_TABLA = "usuarios";
     static final int VERSION_DB = 2;
 
     static final String CREAR_BD =
-            "create table clientes (_id integer primary key autoincrement, "
-                    + "nombre text not null, appellido_materno text not null, appellido_paterno text not null, email text not null, telefono text not null);";
+            "create table usuarios ("
+                    + "email text primary key not null,  usuario text not null, password text not null);";
 
     final Context contexto;
 
@@ -58,11 +57,13 @@ public class AdaptadorDB {
         {
             Log.w(ETIQUETA, "Actualizando la version de la Base de Datos de " + oldVersion + " a "
                     + newVersion + ", este proceso eliminarÃ¡ los registros de la versiÃ³n anterior");
-            db.execSQL("DROP TABLE IF EXISTS clientes");
+            db.execSQL("DROP TABLE IF EXISTS usuarios");
             onCreate(db);
         }
     }
-
+    public void dropTable() {
+        db.execSQL("DROP TABLE IF EXISTS usuarios");
+    }
     //--- Abrimos la BD ---
     public AdaptadorDB open() throws SQLException
     {
@@ -76,34 +77,50 @@ public class AdaptadorDB {
         DBHelper.close();
     }
 
-    //--- Insertamos registros a la tabla clientes ---
-    public long insertaClientes(String nombre, String appPaterno, String appMaterno, String email, String telefono)
+    //--- Insertamos registros a la tabla usuarios ---
+    public long insertaUsuario( String email, String username, String password)
     {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(LLAVE_USERNAME, nombre);
+        initialValues.put(LLAVE_PASSWORD, password);
         initialValues.put(LLAVE_EMAIL, email);
+        initialValues.put(LLAVE_USUARIO, username);
         return db.insert(BD_TABLA, null, initialValues);
     }
 
-    //--- Borra un cliente en particular ---
-    public boolean borraCliente(long idFila)
+    //--- Borra un Usuario en particular ---
+    public boolean borraUsuario(String email)
     {
-        return db.delete(BD_TABLA, LLAVE_IDFILA + "=" + idFila, null) > 0;
+        return db.delete(BD_TABLA, LLAVE_EMAIL + "=" + email, null) > 0;
     }
 
     //--- Recuperamos todos los registros de la tabla ---
-    public Cursor obtenTodosLosClientes()
+    public Cursor obtenTodosLosUsuarios()
     {
-        return db.query(BD_TABLA, new String[] {LLAVE_IDFILA, LLAVE_USERNAME,
+        return db.query(BD_TABLA, new String[] {
                 LLAVE_EMAIL}, null, null, null, null, null);
+    }
+    public boolean login(String email,String password) {
+        String sql = "SELECT EXISTS (SELECT * FROM usuarios WHERE ("+LLAVE_EMAIL+"='"+email+"' or "+ LLAVE_USUARIO + " = '"+email+"')"+
+                " and "+LLAVE_PASSWORD+"='"+password+"' LIMIT 1)";
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        // cursor.getInt(0) is 1 if column with value exists
+        if (cursor.getInt(0) == 1) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
     }
 
     //--- Recuperamos un registro de cliente en particular ---
-    public Cursor obtieneUnCliente(String nom) throws SQLException
+    public Cursor obtieneUnUsuario(String email) throws SQLException
     {
         Cursor mCursor =
-                db.query(true, BD_TABLA, new String[] {LLAVE_IDFILA,LLAVE_USERNAME,
-                                LLAVE_EMAIL}, LLAVE_USERNAME + "=" + nom, null,
+                db.query(true, BD_TABLA, new String[] {
+                                LLAVE_EMAIL,LLAVE_PASSWORD}, LLAVE_EMAIL + "=" + email, null,
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -112,12 +129,11 @@ public class AdaptadorDB {
     }
 
     //--- Actualizamos un registro  ---
-    public boolean actualizaCliente(long idFila, String nombre, String email)
+    public boolean actualizaCliente(String email,String password )
     {
         ContentValues args = new ContentValues();
-        args.put(LLAVE_USERNAME, nombre);
-        args.put(LLAVE_EMAIL, email);
-        return db.update(BD_TABLA, args, LLAVE_IDFILA + "=" + idFila, null) > 0;
+        args.put(LLAVE_PASSWORD, password);
+        return db.update(BD_TABLA, args, LLAVE_EMAIL + "=" + email, null) > 0;
     }
 
 }

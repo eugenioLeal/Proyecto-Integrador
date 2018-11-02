@@ -13,20 +13,23 @@ public class MainActivity extends AppCompatActivity {
     EditText username, password;
     String usernameStr, passwordStr;
     SharedPreferences sp;
+    AdaptadorDB adaptadorDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
-        usernameStr = username.toString();
-        passwordStr = password.toString();
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
+        username.setText(pref.getString("username","no user"));
+
+        adaptadorDB = new AdaptadorDB(this);
+        adaptadorDB.open();
     }
     public void onClickLogin(View v) {
-        sp = getSharedPreferences("crm", Context.MODE_PRIVATE);
-        String data = sp.getString(usernameStr+passwordStr,"");
-        Toast.makeText(this,data,Toast.LENGTH_LONG).show();
-        if (data.length() == 0) {
+        usernameStr = username.toString();
+        passwordStr = password.toString();
+        if (!adaptadorDB.login(usernameStr,passwordStr)) {
             Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
         } else {
             // Put Extras
