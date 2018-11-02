@@ -12,17 +12,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onClickCapture"
-        android:text="capture image" />
+        android:text="capture image" >
+
+    </com.gc.materialdesign.views.ButtonRectangle>
+
+    <com.gc.materialdesign.views.ButtonRectangle
+        android:id="@+id/chooseBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="picker"
+        android:text="choose image" />
 
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="upload image" />
+        android:onClick="subirImagen"
+        android:text="upload image">
+
+    </com.gc.materialdesign.views.ButtonRectangle>
 
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="get results" />
+        android:onClick="onClickResults"
+        android:text="get results">
+
+    </com.gc.materialdesign.views.ButtonRectangle>
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="image name"
+        android:inputType="textPersonName" />
 </LinearLayout>
