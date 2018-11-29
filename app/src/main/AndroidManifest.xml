@@ -35,9 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Menu" />
         <activity android:name=".Register" />
-        <activity android:name=".Results"></activity>
+        <activity android:name=".Menu" />
+        <activity android:name=".Results" />
+        <activity android:name=".Experiments" />
+        <activity android:name=".CreateNewExperiment"></activity>
     </application>
 
 </manifest>

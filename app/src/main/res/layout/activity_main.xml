@@ -40,20 +40,22 @@
 
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/loginBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:onClick="onClickLogin"
         android:text="@string/login" />
 
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/registerBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
-        android:onClick="onClickRegister"
+        android:onClick="register"
         android:text="register" />
 
 </LinearLayout>

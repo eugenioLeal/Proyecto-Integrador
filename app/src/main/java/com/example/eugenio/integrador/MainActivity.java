@@ -1,5 +1,6 @@
 package com.example.eugenio.integrador;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,11 +10,26 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.util.Hashtable;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
+    String MICROSERVICIO;
     EditText username, password;
     String usernameStr, passwordStr;
     SharedPreferences sp;
     AdaptadorDB adaptadorDB;
+    String LLAVE_USER;
+    String LLAVE_PASS;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,26 +38,72 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
         username.setText(pref.getString("username","no user"));
-
+        MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/loginHard.php";
+        LLAVE_USER = "user";
+        LLAVE_PASS = "password";
         adaptadorDB = new AdaptadorDB(this);
         adaptadorDB.open();
     }
     public void onClickLogin(View v) {
         usernameStr = username.toString();
         passwordStr = password.toString();
-        if (!adaptadorDB.login(usernameStr,passwordStr)) {
-            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-        } else {
-            // Put Extras
-            //----
-            // Go to Menu
-            Intent intent = new Intent(MainActivity.this, Menu.class);
-            startActivity(intent);
-        }
-        Intent intent = new Intent(MainActivity.this, Menu.class);
+
+        final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        // Cerramos la barra de progreso
+                        cargadno.dismiss();
+                        // Mostramos un mensaje como respuesta
+                        Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        // Cerramos el dialogo de la barra de progreso
+                        cargadno.dismiss();
+
+                        // Monstramos el mensaje de error
+                        Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                usernameStr = username.getText().toString();
+                passwordStr = password.getText().toString();
+                Map<String, String> params = new Hashtable<String, String>();
+                // Le enexamos los parametros
+                params.put(LLAVE_USER, usernameStr);
+                params.put(LLAVE_PASS, passwordStr);
+
+                // regresamos los parametros
+                return params;
+            }
+        };
+
+        // Usamos Volley para crear la cola de peticiones
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        // Anexamos el request a la cola
+        requestQueue.add(stringRequest);
+        Toast.makeText(this,"Loggineando", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this,Menu.class);
         startActivity(intent);
+//        if (!adaptadorDB.login(usernameStr,passwordStr)) {
+//            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+//        } else {
+//            // Put Extras
+//            //----
+//            // Go to Menu
+//            Intent intent = new Intent(MainActivity.this, Experiments.class);
+//            startActivity(intent);
+//        }
     }
-    public void onClickRegister(View v) {
+
+    public void register(View v) {
         Intent intent = new Intent(MainActivity.this, Register.class);
         startActivity(intent);
     }

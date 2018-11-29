@@ -1,5 +1,6 @@
 package com.example.eugenio.integrador;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,31 +11,90 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.util.Hashtable;
+import java.util.Map;
+
 public class Register extends AppCompatActivity {
     EditText username, password, email;
-    Button registerBtn;
     String usernameStr, passwordStr, emailStr;
-    AdaptadorDB adaptadorDB;
+    String MICROSERVICIO;
+    String LLAVE_USER;
+    String LLAVE_PASS;
+    String LLAVE_EMAIL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/registroHard.php";
+        LLAVE_USER = "user";
+        LLAVE_PASS = "password";
+        LLAVE_EMAIL = "email";
         username = findViewById(R.id.new_username);
         password = findViewById(R.id.new_password);
         email = findViewById(R.id.new_email);
-        registerBtn = findViewById(R.id.registerBtn);
-        adaptadorDB = new AdaptadorDB(this);
-        adaptadorDB.open();
     }
     public void onClickRegister(View v) {
-        usernameStr = username.getText().toString();
-        passwordStr = password.getText().toString();
-        emailStr = email.getText().toString();
-        adaptadorDB.insertaUsuario(emailStr,usernameStr,passwordStr);
-        SharedPreferences sharedPref = getSharedPreferences("crm", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("username",emailStr);
-        editor.commit();
+//        usernameStr = username.getText().toString();
+//        passwordStr = password.getText().toString();
+//        emailStr = email.getText().toString();
+//        adaptadorDB.insertaUsuario(emailStr,usernameStr,passwordStr);
+//        SharedPreferences sharedPref = getSharedPreferences("crm", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putString("username",emailStr);
+//        editor.commit();
+        // Mostramos una barra de progreso
+        final ProgressDialog cargadno = ProgressDialog.show(this, "Registrando...", "Registrando...", false, false);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        // Cerramos la barra de progreso
+                        cargadno.dismiss();
+                        // Mostramos un mensaje como respuesta
+                        Toast.makeText(Register.this, s, Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        // Cerramos el dialogo de la barra de progreso
+                        cargadno.dismiss();
+
+                        // Monstramos el mensaje de error
+                        Toast.makeText(Register.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                usernameStr = username.getText().toString();
+                passwordStr = password.getText().toString();
+                emailStr = email.getText().toString();
+                Map<String, String> params = new Hashtable<String, String>();
+                // Le enexamos los parametros
+                params.put(LLAVE_USER, usernameStr);
+                params.put(LLAVE_PASS, passwordStr);
+                params.put(LLAVE_EMAIL, emailStr);
+
+                // regresamos los parametros
+                return params;
+            }
+        };
+
+        // Usamos Volley para crear la cola de peticiones
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        // Anexamos el request a la cola
+        requestQueue.add(stringRequest);
         Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Register.this,MainActivity.class);
         startActivity(intent);
