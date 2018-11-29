@@ -35,11 +35,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".VideoSplash"></activity>
         <activity android:name=".Register" />
         <activity android:name=".Menu" />
         <activity android:name=".Results" />
         <activity android:name=".Experiments" />
-        <activity android:name=".CreateNewExperiment"></activity>
+        <activity android:name=".CreateNewExperiment" />
     </application>
 
 </manifest>

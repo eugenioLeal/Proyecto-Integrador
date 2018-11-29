@@ -17,6 +17,7 @@ public class CreateNewExperiment extends AppCompatActivity {
     }
     public void onClickCreate(View v) {
         // put Extras or upload to database
+
         Intent intent = new Intent(this, Experiments.class);
         startActivity(intent);
     }

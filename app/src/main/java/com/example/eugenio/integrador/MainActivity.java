@@ -18,8 +18,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
 import java.util.Hashtable;
 import java.util.Map;
+
+/*
+* Material Design,
+* video splash random tomado de la red (videos o imágenes disponibles en ubiquitous),
+* preferencias compartidas (opcional),
+* almacenamiento interno,
+* Volley,
+* RecyclerView,
+* CardViews,
+* MpAndroidChart,
+* manejo de perfiles,
+* autenticación básica en todas las consultas realizas a la API y la implementación de otro mecanismo de seguridad (por ejemplo: OpenID, OAuth2, JSON Web Tokens (JWT), Clef, etc.)
+*/
 
 public class MainActivity extends AppCompatActivity {
     String MICROSERVICIO;
@@ -52,11 +67,32 @@ public class MainActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String s) {
+                    public void onResponse(String response) {
                         // Cerramos la barra de progreso
                         cargadno.dismiss();
                         // Mostramos un mensaje como respuesta
-                        Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
+                        boolean answer = true;
+                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+                        String token = "";
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            if(!obj.getBoolean("answer"))
+                                answer = false;
+                            else {
+                                token = obj.getString("basicAuthToken");
+
+                            }
+
+                        }
+                        catch(Exception e) {
+                            answer = false;
+                        }
+                        if(answer) {
+                            Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
+
+                            Intent intent = new Intent(MainActivity.this, Experiments.class);
+                            startActivity(intent);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -89,9 +125,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Anexamos el request a la cola
         requestQueue.add(stringRequest);
-        Toast.makeText(this,"Loggineando", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(MainActivity.this,Menu.class);
-        startActivity(intent);
+//        Toast.makeText(this,"Loggineando", Toast.LENGTH_SHORT).show();
+
 //        if (!adaptadorDB.login(usernameStr,passwordStr)) {
 //            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
 //        } else {
