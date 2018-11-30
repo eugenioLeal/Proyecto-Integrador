@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-    
+
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         android:layout_marginTop="40dp"
         android:layout_weight="1"
         android:contentDescription="@string/logo"
-        app:srcCompat="@drawable/thewheel" />
+        app:srcCompat="@drawable/themerawheel" />
 
     <EditText
         android:id="@+id/username"

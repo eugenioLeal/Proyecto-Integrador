@@ -19,7 +19,7 @@
         android:layout_height="30dp"
         android:layout_weight="1"
         android:onClick="onClickCreate"
-        android:text="create new"
+        android:text="CREA NUEVA"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"/>
