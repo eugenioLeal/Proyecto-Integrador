@@ -18,15 +18,16 @@ public class ExperimentData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_data);
 
-        String newString = getIntent().getExtras().getString("id");
+        String idExperimento = getIntent().getExtras().getString("id");
 
-        Toast.makeText(ExperimentData.this,"id recibido es: "+newString,Toast.LENGTH_SHORT).show();
+        Toast.makeText(ExperimentData.this,"id recibido es: "+idExperimento,Toast.LENGTH_SHORT).show();
 
     }
-public void onClick(View view)
+public void onClickAddImage(View view)
 {
-
-    Intent intent = new Intent(ExperimentData.this,ImageData.class);
+    String idExperimento = getIntent().getExtras().getString("id");
+    Intent intent = new Intent(ExperimentData.this,Menu.class);
+    intent.putExtra("id", String.valueOf(idExperimento));
     startActivity(intent);
 }
 
