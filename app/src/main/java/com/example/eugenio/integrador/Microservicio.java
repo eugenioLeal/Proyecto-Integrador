@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Microservicio extends AppCompatActivity {
+public class weMicroservicio extends AppCompatActivity {
 
     String postUrl;
     RequestQueue queue;
