@@ -25,8 +25,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:hint="username"
-        android:inputType="textPersonName"
-        android:text="username" />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/password"
@@ -36,7 +35,6 @@
         android:layout_weight="1"
         android:ems="10"
         android:hint="@string/password"
-        android:text="password"
         android:inputType="textPassword" />
 
     <com.gc.materialdesign.views.ButtonRectangle

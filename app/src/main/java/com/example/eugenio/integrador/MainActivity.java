@@ -23,19 +23,6 @@ import org.json.JSONObject;
 import java.util.Hashtable;
 import java.util.Map;
 
-/*
-* Material Design,
-* video splash random tomado de la red (videos o imágenes disponibles en ubiquitous),
-* preferencias compartidas (opcional),
-* almacenamiento interno,
-* Volley,
-* RecyclerView,
-* CardViews,
-* MpAndroidChart,
-* manejo de perfiles,
-* autenticación básica en todas las consultas realizas a la API y la implementación de otro mecanismo de seguridad (por ejemplo: OpenID, OAuth2, JSON Web Tokens (JWT), Clef, etc.)
-*/
-
 public class MainActivity extends AppCompatActivity {
     String MICROSERVICIO;
     EditText username, password;
@@ -53,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         pref = getApplicationContext().getSharedPreferences("crm", Context.MODE_PRIVATE);
-        username.setText(pref.getString("username","no user"));
+        username.setText(pref.getString("username",""));
         MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/login.php";
         LLAVE_USER = "user";
         LLAVE_PASS = "password";
@@ -63,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClickLogin(View v) {
         usernameStr = username.toString().trim();
         passwordStr = password.toString().trim();
-//        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
-//        intent.putExtra("username",usernameStr);
         if(!usernameStr.equals("") && !passwordStr.equals("")) {
 
             final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
@@ -131,17 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
             // Anexamos el request a la cola
             requestQueue.add(stringRequest);
-            //        Toast.makeText(this,"Loggineando", Toast.LENGTH_SHORT).show();
-
-            //        if (!adaptadorDB.login(usernameStr,passwordStr)) {
-            //            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-            //        } else {
-            //            // Put Extras
-            //            //----
-            //            // Go to Menu
-            //            Intent intent = new Intent(MainActivity.this, Experiments.class);
-            //            startActivity(intent);
-            //        }
         }
         else {
             Toast.makeText(MainActivity.this, "Llena todos los campos", Toast.LENGTH_LONG).show();
