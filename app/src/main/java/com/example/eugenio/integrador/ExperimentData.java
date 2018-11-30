@@ -118,8 +118,6 @@ public class ExperimentData extends AppCompatActivity {
                                                         long id) {
                                     Intent intent = new Intent(ExperimentData.this,ImageData.class);
                                     int image_id = imageArr[position].id;
-                                    Toast.makeText(ExperimentData.this,"mandar id:  "+image_id,Toast.LENGTH_SHORT).show();
-
                                     intent.putExtra("id", String.valueOf(image_id));
                                     startActivity(intent);
                                 }
@@ -155,9 +153,6 @@ public class ExperimentData extends AppCompatActivity {
         queue.add(stringRequest);
 
         String idExperimento = getIntent().getExtras().getString("id");
-
-        Toast.makeText(ExperimentData.this,"id recibido es: "+idExperimento,Toast.LENGTH_SHORT).show();
-
    }
 
    public void onClickAddImage(View view)
