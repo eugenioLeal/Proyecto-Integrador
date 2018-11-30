@@ -45,6 +45,10 @@ public class Experiments extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments);
+        listView = findViewById(R.id.list_view);
+        queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
+
+        url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/experimentos.php";
         reload();
     }
     protected void onStart() {
@@ -52,10 +56,6 @@ public class Experiments extends AppCompatActivity {
         reload();
     }
     public void reload(){
-        listView = findViewById(R.id.list_view);
-        queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
-
-        url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/experimentos.php";
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
         token = pref.getString("token",null);
