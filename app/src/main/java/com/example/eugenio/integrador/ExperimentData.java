@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static android.os.SystemClock.sleep;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -91,10 +93,17 @@ public class ExperimentData extends AppCompatActivity {
                 });
         queue.add(jsonObjectRequest);
 
-        String newString = getIntent().getExtras().getString("id");
+        String idExperimento = getIntent().getExtras().getString("id");
 
-        Toast.makeText(ExperimentData.this,"id recibido es: "+newString,Toast.LENGTH_SHORT).show();
+        Toast.makeText(ExperimentData.this,"id recibido es: "+idExperimento,Toast.LENGTH_SHORT).show();
 
+    }
+    public void onClickAddImage(View view)
+    {
+        String idExperimento = getIntent().getExtras().getString("id");
+        Intent intent = new Intent(ExperimentData.this,Menu.class);
+        intent.putExtra("id", String.valueOf(idExperimento));
+        startActivity(intent);
     }
 
 }

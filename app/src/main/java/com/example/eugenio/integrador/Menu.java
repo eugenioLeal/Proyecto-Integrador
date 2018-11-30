@@ -42,6 +42,8 @@ public class Menu extends AppCompatActivity {
     private EditText editarNombre;
     private String LLAVE_IMAGEN = "imagen";
     private String LLAVE_NOMBRE = "nombre";
+    private String LLAVE_ID_EXPERIMENTO = "experimento_id";
+
     String mCurrentPhotoPath;
     int READ_REQUEST_CODE = 42;
     private int SOLICITAR_REQUEST = 1;
@@ -140,6 +142,7 @@ public class Menu extends AppCompatActivity {
                 // Le enexamos los parametros
                 params.put(LLAVE_IMAGEN, imagen);
                 params.put(LLAVE_NOMBRE, nombre);
+                params.put(LLAVE_ID_EXPERIMENTO,getIntent().getExtras().getString("id"));
 
                 // regresamos los parametros
                 return params;
