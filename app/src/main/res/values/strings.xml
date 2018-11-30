@@ -6,4 +6,5 @@
     <string name="logo">logo</string>
     <string name="email">email</string>
     <string name="title_activity_experiment_data">ExperimentData</string>
+    <string name="subirImagen">Añadir Imagen</string>
 </resources>
