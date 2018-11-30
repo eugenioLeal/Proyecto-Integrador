@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Experiment {
-    private int id;
-    private String name;
-    private String dateStr;
-    private String time;
-    private Date date;
+    public int id;
+    public String name;
+    public String dateStr;
+    public String time;
+    public Date date;
     private SimpleDateFormat formatter;
 
     public Experiment(){

@@ -1,10 +1,10 @@
 package com.example.eugenio.integrador;
 
 public class Image {
-    private int id;
-    private String name;
-    private String fecha;
-    private String hora;
+    public int id;
+    public String name;
+    public String fecha;
+    public String hora;
     public Image(){
 
     }
