@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
                         boolean answer = true;
                         Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
                         String token = "";
-                        String email = "";
                         try {
                             JSONObject obj = new JSONObject(response);
                             if(!obj.getBoolean("answer"))
@@ -88,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                         catch(Exception e) {
+                            e.printStackTrace();
                             answer = false;
                         }
                         if(answer) {

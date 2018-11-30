@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,6 +25,10 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class Experiments extends AppCompatActivity {
 //    RecycleElement[] experiments;
@@ -40,32 +45,35 @@ public class Experiments extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments);
+        reload();
+    }
+    protected void onStart() {
+        super.onStart();
+        reload();
+    }
+    public void reload(){
         listView = findViewById(R.id.list_view);
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
 
-        SharedPreferences mPrefs = getSharedPreferences("crm", MODE_PRIVATE); //add key
+        url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/experimentos.php";
 
-        token = mPrefs.getString("token",null);
-        Toast.makeText(Experiments.this, "el token de sharedPref es"+token,Toast.LENGTH_SHORT).show();
-
-        url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/experimentosHard.php";
-
-        Toast.makeText(this, token, Toast.LENGTH_SHORT).show();
-        Log.d("tag",token);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
+        token = pref.getString("token",null);
 
         // From service
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.POST, url,null, new Response.Listener<JSONObject>() {
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, url, new Response.Listener<String>() {
 
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(Experiments.this, response.toString(), Toast.LENGTH_SHORT).show();
+                    public void onResponse(String stringResponse) {
+                        Toast.makeText(Experiments.this, stringResponse, Toast.LENGTH_SHORT).show();
                         Boolean answer;
                         JSONArray data;
                         int id;
                         String nombre,created_at,fecha,hora;
                         ArrayAdapter<Experiment> adapter;
                         try {
+                            JSONObject response = new JSONObject(stringResponse);
                             answer = response.getBoolean("answer");
                             data = response.getJSONArray("data");
                             experimentArr = new Experiment[data.length()];
@@ -94,9 +102,9 @@ public class Experiments extends AppCompatActivity {
 
                                     Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(Experiments.this,ExperimentData.class);
-                                    Toast.makeText(Experiments.this,"mandar id:  "+id,Toast.LENGTH_SHORT).show();
-
-                                    intent.putExtra("id", String.valueOf(id));
+                                    int experimento_id = experimentArr[position].id;
+                                    Toast.makeText(Experiments.this,"mandar id:  "+experimento_id,Toast.LENGTH_SHORT).show();
+                                    intent.putExtra("id", String.valueOf(experimentArr[position].id));
                                     startActivity(intent);
 
 
@@ -114,8 +122,19 @@ public class Experiments extends AppCompatActivity {
                         // TODO: Handle error
                         Toast.makeText(Experiments.this, "error", Toast.LENGTH_SHORT).show();
                     }
-                });
-        queue.add(jsonObjectRequest);
+                }){
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new Hashtable<String, String>();
+                // Le enexamos los parametros
+                params.put("token", token);
+
+                // regresamos los parametros
+                return params;
+            }
+        };
+        queue.add(stringRequest);
 
         // Hardcoded
 //        data = new Experiment[]{
