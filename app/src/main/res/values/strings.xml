@@ -5,4 +5,5 @@
     <string name="login">login</string>
     <string name="logo">logo</string>
     <string name="email">email</string>
+    <string name="title_activity_experiment_data">ExperimentData</string>
 </resources>

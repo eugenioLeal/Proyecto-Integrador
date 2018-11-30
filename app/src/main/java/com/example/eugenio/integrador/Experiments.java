@@ -88,13 +88,18 @@ public class Experiments extends AppCompatActivity {
                                     String item = ((TextView)view).getText().toString();
 
                                     Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(Experiments.this,ExperimentData.class);
+                                    Toast.makeText(Experiments.this,"mandar id:  "+id,Toast.LENGTH_SHORT).show();
+
+                                    intent.putExtra("id", String.valueOf(id));
+                                    startActivity(intent);
+
 
                                 }
                             });
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
 
                     }
                 }, new Response.ErrorListener() {
@@ -116,6 +121,8 @@ public class Experiments extends AppCompatActivity {
 
 
 
+
+                //Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
 
 
 

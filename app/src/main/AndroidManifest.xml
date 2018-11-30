@@ -35,12 +35,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".VideoSplash"></activity>
+        <activity android:name=".VideoSplash" />
         <activity android:name=".Register" />
         <activity android:name=".Menu" />
         <activity android:name=".Results" />
         <activity android:name=".Experiments" />
         <activity android:name=".CreateNewExperiment" />
+        <activity
+            android:name=".ExperimentData"
+            android:label="@string/title_activity_experiment_data"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
