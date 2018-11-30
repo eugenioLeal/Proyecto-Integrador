@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
         username.setText(pref.getString("username","no user"));
-        MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/loginHard.php";
+        MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/login.php";
         LLAVE_USER = "user";
         LLAVE_PASS = "password";
         adaptadorDB = new AdaptadorDB(this);
@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     public void onClickLogin(View v) {
         usernameStr = username.toString();
         passwordStr = password.toString();
+        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
+        intent.putExtra("username",usernameStr);
 
         final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
@@ -80,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
                                 answer = false;
                             else {
                                 token = obj.getString("basicAuthToken");
-
                             }
 
                         }

@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,7 +33,7 @@ public class Experiments extends AppCompatActivity {
     String token;
     RequestQueue queue;
     ListView listView;
-    Experiment[] data;
+    Experiment[] experimentArr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +55,46 @@ public class Experiments extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Toast.makeText(Experiments.this, response.toString(), Toast.LENGTH_SHORT).show();
-                        JSONObject answer, data;
+                        Boolean answer;
+                        JSONArray data;
+                        int id;
+                        String nombre,created_at,fecha,hora;
+                        ArrayAdapter<Experiment> adapter;
                         try {
-                            answer = response.getJSONObject("answer");
-                            data = response.getJSONObject("data");
+                            answer = response.getBoolean("answer");
+                            data = response.getJSONArray("data");
+                            experimentArr = new Experiment[data.length()];
+                            for(int i = 0; i < data.length();i++){
+                                JSONObject iter = data.getJSONObject(i);
+                                id = iter.getInt("id");
+                                nombre = iter.getString("nombre");
+                                created_at = iter.getString("created_at");
+                                Log.d("created",created_at);
+                                String[] splitted = created_at.split(" ");
+                                fecha = splitted[0];
+                                Log.d("fechaaaaaaa",fecha);
+                                hora = splitted[1];
+                                experimentArr[i] = new Experiment(id,nombre,fecha,hora);
+                            }
+                            adapter = new ArrayAdapter<Experiment>(Experiments.this,
+                                    android.R.layout.simple_list_item_1, experimentArr);
+
+                            listView.setAdapter(adapter);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                                        long id) {
+
+                                    String item = ((TextView)view).getText().toString();
+
+                                    Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+
+                                }
+                            });
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -74,28 +108,15 @@ public class Experiments extends AppCompatActivity {
         queue.add(jsonObjectRequest);
 
         // Hardcoded
-        data = new Experiment[]{
-                new Experiment(1,"myExperiment1","11/30/2018","12:26:18"),
-                new Experiment(2,"myExperiment2","11/29/2018","12:26:20"),
-        };
+//        data = new Experiment[]{
+//                new Experiment(1,"myExperiment1","11/30/2018","12:26:18"),
+//                new Experiment(2,"myExperiment2","11/29/2018","12:26:20"),
+//        };
 
 
-        ArrayAdapter<Experiment> adapter = new ArrayAdapter<Experiment>(this,
-                android.R.layout.simple_list_item_1, data);
 
-        listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
 
-                String item = ((TextView)view).getText().toString();
-
-                Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-
-            }
-        });
 
 
 //        experiments = new RecycleElement[3];

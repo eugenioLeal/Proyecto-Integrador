@@ -19,6 +19,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ public class Register extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/registroHard.php";
+        MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/registro.php";
         LLAVE_USER = "user";
         LLAVE_PASS = "password";
         LLAVE_EMAIL = "email";
@@ -55,11 +57,25 @@ public class Register extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String s) {
+                    public void onResponse(String response) {
                         // Cerramos la barra de progreso
                         cargadno.dismiss();
                         // Mostramos un mensaje como respuesta
-                        Toast.makeText(Register.this, s, Toast.LENGTH_LONG).show();
+                        Toast.makeText(Register.this, response, Toast.LENGTH_LONG).show();
+                        String token = "";
+                        Boolean answer = true;
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            if(!obj.getBoolean("answer"))
+                                answer = false;
+                        }
+                        catch(Exception e) {
+                            answer = false;
+                        }
+                        if(answer) {
+                            Intent intent = new Intent(Register.this,MainActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -95,8 +111,8 @@ public class Register extends AppCompatActivity {
 
         // Anexamos el request a la cola
         requestQueue.add(stringRequest);
-        Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
+        /*Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Register.this,MainActivity.class);
-        startActivity(intent);
+        startActivity(intent);*/
     }
 }
