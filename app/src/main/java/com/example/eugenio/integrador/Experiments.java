@@ -45,6 +45,13 @@ public class Experiments extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments);
+        reload();
+    }
+    protected void onStart() {
+        super.onStart();
+        reload();
+    }
+    public void reload(){
         listView = findViewById(R.id.list_view);
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
 

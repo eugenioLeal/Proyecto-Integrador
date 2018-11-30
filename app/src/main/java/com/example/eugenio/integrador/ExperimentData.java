@@ -43,6 +43,12 @@ public class ExperimentData extends AppCompatActivity {
         setContentView(R.layout.activity_experiment_data);
         listView = findViewById(R.id.list_view2);
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
+    }
+    public void onStart() {
+        super.onStart();
+        reload();
+    }
+    public void reload(){
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
         token = pref.getString("token",null);
