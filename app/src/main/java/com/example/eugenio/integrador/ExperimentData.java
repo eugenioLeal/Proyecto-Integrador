@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +33,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import java.io.InputStream;
@@ -75,6 +82,7 @@ public class ExperimentData extends AppCompatActivity {
                         String fecha, hora;
                         ArrayAdapter<Image> adapter;
                         String imageUrl;
+                        ListView list =findViewById(R.id.list_view);
                         try {
                             Toast.makeText(ExperimentData.this, stringResponse, Toast.LENGTH_SHORT).show();
                             JSONObject response = new JSONObject(stringResponse);
@@ -92,34 +100,34 @@ public class ExperimentData extends AppCompatActivity {
                                 Log.d("fechaaaaaaa",fecha);
                                 hora = splitted[1];
                                 imageUrl = iter.getString("url");
-                                imageArr[i] = new Image(id,nombre,fecha,hora);
-                                new DownloadImageFromInternet((ImageView) findViewById(R.id.listview_image))
-                                        .execute(imageUrl);
+                                imageArr[i] = new Image(id,nombre,fecha,hora,imageUrl);
                             }
-                            adapter = new ArrayAdapter<Image>(ExperimentData.this,
-                                    android.R.layout, imageArr);
+                            String[] from = {"listview_image", "listview_title"};
+                            int[] to = {R.id.listview_image, R.id.listview_item_title};
+//                              dapter = new ArrayAdapter<Image>(ExperimentData.this,
+//                                    android.R.layout.simple_list_item_1, imageArr);
+                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
-                            listView.setAdapter(adapter);
+                            StrictMode.setThreadPolicy(policy);
+                            CustomAdapter simpleAdapter = new CustomAdapter(getBaseContext(),imageArr);
+
+                            listView.setAdapter(simpleAdapter);
                             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position,
                                                         long id) {
-
-                                    String item = ((TextView)view).getText().toString();
-
-                                    Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(ExperimentData.this,ImageData.class);
                                     int image_id = imageArr[position].id;
                                     Toast.makeText(ExperimentData.this,"mandar id:  "+image_id,Toast.LENGTH_SHORT).show();
 
                                     intent.putExtra("id", String.valueOf(image_id));
                                     startActivity(intent);
-
-
                                 }
                             });
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(ExperimentData.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+
                         }
 
                     }
@@ -149,8 +157,9 @@ public class ExperimentData extends AppCompatActivity {
 
         Toast.makeText(ExperimentData.this,"id recibido es: "+idExperimento,Toast.LENGTH_SHORT).show();
 
-    }
-    public void onClickAddImage(View view)
+   }
+
+   public void onClickAddImage(View view)
     {
         String idExperimento = getIntent().getExtras().getString("id");
         Intent intent = new Intent(ExperimentData.this,Menu.class);
