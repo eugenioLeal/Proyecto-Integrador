@@ -1,6 +1,7 @@
 package com.example.eugenio.integrador;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,21 +15,28 @@ import android.widget.Toast;
 
 import static android.os.SystemClock.sleep;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Hashtable;
+import java.util.Map;
+
 public class ExperimentData extends AppCompatActivity {
     ListView listView;
-    String url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/imagenesHard.php";
+    String url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/imagenes.php";
     RequestQueue queue;
     Image[] imageArr;
+    String token;
+    String experimento_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +44,15 @@ public class ExperimentData extends AppCompatActivity {
         listView = findViewById(R.id.list_view2);
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
+        token = pref.getString("token",null);
 
+        experimento_id = getIntent().getExtras().getString("id");
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, url, new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(ExperimentData.this, response.toString(), Toast.LENGTH_SHORT).show();
+                    public void onResponse(String stringResponse) {
                         Boolean answer;
                         JSONArray data;
                         int id;
@@ -50,6 +61,8 @@ public class ExperimentData extends AppCompatActivity {
                         String fecha, hora;
                         ArrayAdapter<Image> adapter;
                         try {
+                            Toast.makeText(ExperimentData.this, stringResponse, Toast.LENGTH_SHORT).show();
+                            JSONObject response = new JSONObject(stringResponse);
                             answer = response.getBoolean("answer");
                             data = response.getJSONArray("data");
                             imageArr = new Image[data.length()];
@@ -78,9 +91,10 @@ public class ExperimentData extends AppCompatActivity {
 
                                     Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(ExperimentData.this,ImageData.class);
-                                    Toast.makeText(ExperimentData.this,"mandar id:  "+id,Toast.LENGTH_SHORT).show();
+                                    int image_id = imageArr[position].id;
+                                    Toast.makeText(ExperimentData.this,"mandar id:  "+image_id,Toast.LENGTH_SHORT).show();
 
-                                    intent.putExtra("id", String.valueOf(id));
+                                    intent.putExtra("id", String.valueOf(image_id));
                                     startActivity(intent);
 
 
@@ -98,8 +112,20 @@ public class ExperimentData extends AppCompatActivity {
                         // TODO: Handle error
                         Toast.makeText(ExperimentData.this, "error", Toast.LENGTH_SHORT).show();
                     }
-                });
-        queue.add(jsonObjectRequest);
+                }){
+
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params = new Hashtable<String, String>();
+                            // Le enexamos los parametros
+                            params.put("token", token);
+                            params.put("experimento_id", experimento_id);
+
+                            // regresamos los parametros
+                            return params;
+                        }
+                    };
+        queue.add(stringRequest);
 
         String idExperimento = getIntent().getExtras().getString("id");
 

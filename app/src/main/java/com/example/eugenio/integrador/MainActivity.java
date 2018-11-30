@@ -77,18 +77,17 @@ public class MainActivity extends AppCompatActivity {
                         boolean answer = true;
                         Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
                         String token = "";
-                        String email = "";
                         try {
                             JSONObject obj = new JSONObject(response);
                             if(!obj.getBoolean("answer"))
                                 answer = false;
                             else {
                                 token = obj.getString("basicAuthToken");
-                                email = obj.getString("email");
                             }
 
                         }
                         catch(Exception e) {
+                            e.printStackTrace();
                             answer = false;
                         }
                         if(answer) {
@@ -96,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, Experiments.class);
                             SharedPreferences.Editor editor = pref.edit();
                             editor.putString("token",token);
-                            editor.putString("email",email);
                             editor.commit();
                             intent.putExtra("token",token);
                             startActivity(intent);
