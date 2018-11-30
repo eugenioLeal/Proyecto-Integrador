@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Experiments extends AppCompatActivity {
@@ -27,8 +29,8 @@ public class Experiments extends AppCompatActivity {
 //    private RecyclerView.Adapter mAdapter;
 //    private RecyclerView.LayoutManager mLayoutManager;
     String url;
+    String token;
     RequestQueue queue;
-
     ListView listView;
     Experiment[] data;
 
@@ -37,8 +39,39 @@ public class Experiments extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments);
         listView = findViewById(R.id.list_view);
+        queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
 
-        url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/crearExperimentosHard.php";
+        url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/experimentosHard.php";
+        Bundle bundle = getIntent().getExtras();
+        token = bundle.getString("token");
+        Toast.makeText(this, token, Toast.LENGTH_SHORT).show();
+        Log.d("tag",token);
+
+        // From service
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(Experiments.this, response.toString(), Toast.LENGTH_SHORT).show();
+                        JSONObject answer, data;
+                        try {
+                            answer = response.getJSONObject("answer");
+                            data = response.getJSONObject("data");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        Toast.makeText(Experiments.this, "error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        queue.add(jsonObjectRequest);
 
         // Hardcoded
         data = new Experiment[]{
@@ -69,23 +102,7 @@ public class Experiments extends AppCompatActivity {
             }
         });
 
-        // TODO: Get with Volley
-        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(Experiments.this, response.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                        Toast.makeText(Experiments.this, "error", Toast.LENGTH_SHORT).show();
-                    }
-                });
-        queue.add(jsonObjectRequest);*/
 //        experiments = new RecycleElement[3];
 //        experiments[0] = new RecycleElement("Experimento1","2018-11-16","Mexico",0);
 //        mRecyclerView = findViewById(R.id.my_recycler_view);

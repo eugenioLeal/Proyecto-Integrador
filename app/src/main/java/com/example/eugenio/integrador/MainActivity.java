@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if(answer) {
                             Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
-
                             Intent intent = new Intent(MainActivity.this, Experiments.class);
+                            intent.putExtra("token",token);
                             startActivity(intent);
                         }
                     }
