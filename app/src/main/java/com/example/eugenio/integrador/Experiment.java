@@ -29,6 +29,6 @@ public class Experiment {
 
     @Override
     public String toString() {
-        return this.id + ". " + this.name + " " + this.date + " " + this.time;
+        return this.id + ". " + this.name + " " + this.dateStr + " " + this.time;
     }
 }
