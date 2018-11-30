@@ -30,6 +30,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -113,7 +115,27 @@ public class Menu extends AppCompatActivity {
                         // Cerramos la barra de progreso
                         cargadno.dismiss();
                         // Mostramos un mensaje como respuesta
-                        Toast.makeText(Menu.this, s, Toast.LENGTH_LONG).show();
+                        Toast.makeText(Menu.this, s, Toast.LENGTH_SHORT).show();
+                        String token = "";
+                        int imgId = -1;
+                        Boolean answer = true;
+                        try {
+                            JSONObject obj = new JSONObject(s);
+                            if(!obj.getBoolean("answer"))
+                                answer = false;
+                            else
+                               imgId= obj.getInt("data");
+                        }
+                        catch(Exception e) {
+                            answer = false;
+                        }
+                        if(answer) {
+                            Toast.makeText(Menu.this, "imagen mandada", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(Menu.this,ImageData.class);
+                            intent.putExtra("id",String.valueOf(imgId));
+                            startActivity(intent);
+                        }
                     }
                 },
                 new Response.ErrorListener() {

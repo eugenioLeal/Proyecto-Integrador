@@ -41,14 +41,15 @@ public class ImageData extends AppCompatActivity {
         xAxis1 = new ArrayList<>();
         yAxis = null;
         yValues = new ArrayList<>();
-
+        String imgId = getIntent().getExtras().getString("id");
+        Toast.makeText(ImageData.this,"img id: "+imgId,Toast.LENGTH_SHORT).show();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Toast.makeText(ImageData.this,response.toString(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(ImageData.this,response.toString(),Toast.LENGTH_SHORT).show();
                             //Log.d("s","Response: " + response);
                             JSONArray array = response.getJSONArray("data");
 
@@ -75,7 +76,7 @@ public class ImageData extends AppCompatActivity {
                         }
                         catch(Exception e){
                             Log.d("s","Error: " + e.toString());
-                            Toast.makeText(ImageData.this,e.toString(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(ImageData.this,e.toString(),Toast.LENGTH_SHORT).show();
 
                         }
                     }
