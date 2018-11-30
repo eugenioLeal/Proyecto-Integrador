@@ -89,11 +89,11 @@ public class Experiments extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-
+                
                 String item = ((TextView)view).getText().toString();
 
                 //Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Experiments.this,ExperimentData.class);
+                Intent intent = new Intent(Experiments.this, ExperimentData.class);
                 Toast.makeText(Experiments.this,"mandar id:  "+id,Toast.LENGTH_SHORT).show();
 
                 intent.putExtra("id", String.valueOf(id));
