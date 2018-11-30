@@ -58,7 +58,7 @@ public class Menu extends AppCompatActivity {
 
     }
     public void onClickCapture(View v) {
-        dispatchTakePictureIntent();
+        takePictureIntent();
     }
     // Simple version without saving image
     private void takePictureIntent() {
@@ -72,10 +72,13 @@ public class Menu extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
+            Log.d("foto","1");
             File photoFile = null;
             try {
+                Log.d("foto","2");
                 photoFile = createImageFile();
             } catch (IOException ex) {
+                Log.d("foto","3");
                 // Error occurred while creating the File
                 ex.printStackTrace();
                 Toast.makeText(Menu.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
@@ -83,7 +86,8 @@ public class Menu extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
+                Log.d("foto","4");
+               Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -94,15 +98,16 @@ public class Menu extends AppCompatActivity {
     @Override
     protected void onActivityResult(int codigoDeSolicitud, int codigoDeResultado, Intent datos) {
         super.onActivityResult(codigoDeSolicitud, codigoDeResultado, datos);
-
-        if (codigoDeSolicitud == SOLICITAR_REQUEST && codigoDeResultado == RESULT_OK && datos != null && datos.getData() != null) {
+        Log.d("foto","5");
+                Log.d("foto",String.valueOf(codigoDeSolicitud)+datos.toString()+datos.getData().toString());
+        if (codigoDeSolicitud == REQUEST_TAKE_PHOTO && datos != null && datos.getData() != null) {
             Uri filePath = datos.getData();
             try {
+                Log.d("foto","6");
                 //Getting the Bitmap from Gallery
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-
-
             } catch (IOException e) {
+                Log.d("foto","7");
                 e.printStackTrace();
                 Toast.makeText(Menu.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -148,7 +153,7 @@ public class Menu extends AppCompatActivity {
                         cargadno.dismiss();
 
                         // Monstramos el mensaje de error
-                        Toast.makeText(Menu.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Menu.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }) {
 
@@ -192,7 +197,6 @@ public class Menu extends AppCompatActivity {
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
     public String obtieneNombreImagen(Bitmap mapadebits) {
         ByteArrayOutputStream imagen = new ByteArrayOutputStream();
         mapadebits.compress(Bitmap.CompressFormat.JPEG, 100, imagen);
