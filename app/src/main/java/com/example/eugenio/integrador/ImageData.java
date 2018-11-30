@@ -13,7 +13,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
@@ -102,7 +101,6 @@ public class ImageData extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
                         Log.d("s","Error: " + error.toString());
                     }
                 }
@@ -120,6 +118,5 @@ public class ImageData extends AppCompatActivity {
             }
         };
         queue.add(stringRequest);
-        // Access the RequestQueue through your singleton class.
     }
 }

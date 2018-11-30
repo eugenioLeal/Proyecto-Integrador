@@ -215,8 +215,4 @@ public class Menu extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Selecione la imagen"), SOLICITAR_REQUEST);
     }
-    public void onClickResults(View v) {
-        Intent intent = new Intent(Menu.this,Results.class);
-        startActivity(intent);
-    }
 }

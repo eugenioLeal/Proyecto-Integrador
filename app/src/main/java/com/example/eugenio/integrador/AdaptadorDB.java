@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-//
-
 public class AdaptadorDB {
 
     static final String  LLAVE_EMAIL = "email";

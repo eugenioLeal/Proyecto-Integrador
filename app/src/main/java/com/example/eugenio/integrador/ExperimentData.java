@@ -8,37 +8,23 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import static android.os.SystemClock.sleep;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import java.io.InputStream;
@@ -54,9 +40,7 @@ public class ExperimentData extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_data);
-        //adapter
         listView = findViewById(R.id.list_view2);
-        //set adapter
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
     }
     public void onStart() {
@@ -104,8 +88,6 @@ public class ExperimentData extends AppCompatActivity {
                             }
                             String[] from = {"listview_image", "listview_title"};
                             int[] to = {R.id.listview_image, R.id.listview_item_title};
-//                              dapter = new ArrayAdapter<Image>(ExperimentData.this,
-//                                    android.R.layout.simple_list_item_1, imageArr);
                             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
                             StrictMode.setThreadPolicy(policy);

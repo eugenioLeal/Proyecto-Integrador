@@ -108,9 +108,6 @@ public class Register extends AppCompatActivity {
 
             // Anexamos el request a la cola
             requestQueue.add(stringRequest);
-                /*Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Register.this,MainActivity.class);
-                startActivity(intent);*/
             }
         else
         {

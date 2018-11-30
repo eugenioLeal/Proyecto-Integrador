@@ -32,15 +32,6 @@
 
     </com.gc.materialdesign.views.ButtonRectangle>
 
-    <com.gc.materialdesign.views.ButtonRectangle
-        android:id="@+id/results"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickResults"
-        android:text="get results">
-
-    </com.gc.materialdesign.views.ButtonRectangle>
-
     <EditText
         android:id="@+id/editText"
         android:layout_width="wrap_content"

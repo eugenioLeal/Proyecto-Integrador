@@ -31,10 +31,6 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class Experiments extends AppCompatActivity {
-//    RecycleElement[] experiments;
-//    private RecyclerView mRecyclerView;
-//    private RecyclerView.Adapter mAdapter;
-//    private RecyclerView.LayoutManager mLayoutManager;
     String url;
     String token;
     RequestQueue queue;
@@ -135,30 +131,6 @@ public class Experiments extends AppCompatActivity {
             }
         };
         queue.add(stringRequest);
-
-        // Hardcoded
-//        data = new Experiment[]{
-//                new Experiment(1,"myExperiment1","11/30/2018","12:26:18"),
-//                new Experiment(2,"myExperiment2","11/29/2018","12:26:20"),
-//        };
-
-
-
-
-
-                //Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-
-
-
-//        experiments = new RecycleElement[3];
-//        experiments[0] = new RecycleElement("Experimento1","2018-11-16","Mexico",0);
-//        mRecyclerView = findViewById(R.id.my_recycler_view);
-//        mRecyclerView.setHasFixedSize(true);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        mAdapter = new MyAdapter(this,experiments);
-//        mRecyclerView.setAdapter(mAdapter);
-//        String data[] = new String[];["Experimento1 11/28/18","Experimento2 11/29/18"];
-
     }
     public void onClickCreate(View v) {
         Intent intent = new Intent(this,CreateNewExperiment.class);
