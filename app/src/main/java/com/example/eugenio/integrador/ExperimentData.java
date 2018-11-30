@@ -1,6 +1,9 @@
 package com.example.eugenio.integrador;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -8,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+
 public class ExperimentData extends AppCompatActivity {
     ListView listView;
     String url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/imagenesHard.php";
@@ -33,7 +39,9 @@ public class ExperimentData extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_data);
+        //adapter
         listView = findViewById(R.id.list_view2);
+        //set adapter
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -49,6 +57,7 @@ public class ExperimentData extends AppCompatActivity {
                         String created_at;
                         String fecha, hora;
                         ArrayAdapter<Image> adapter;
+                        String imageUrl;
                         try {
                             answer = response.getBoolean("answer");
                             data = response.getJSONArray("data");
@@ -63,10 +72,13 @@ public class ExperimentData extends AppCompatActivity {
                                 fecha = splitted[0];
                                 Log.d("fechaaaaaaa",fecha);
                                 hora = splitted[1];
+                                imageUrl = iter.getString("url");
                                 imageArr[i] = new Image(id,nombre,fecha,hora);
+                                new DownloadImageFromInternet((ImageView) findViewById(R.id.listview_image))
+                                        .execute(imageUrl);
                             }
                             adapter = new ArrayAdapter<Image>(ExperimentData.this,
-                                    android.R.layout.simple_list_item_1, imageArr);
+                                    android.R.layout, imageArr);
 
                             listView.setAdapter(adapter);
                             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -112,6 +124,33 @@ public class ExperimentData extends AppCompatActivity {
         Intent intent = new Intent(ExperimentData.this,Menu.class);
         intent.putExtra("id", String.valueOf(idExperimento));
         startActivity(intent);
+    }
+
+    private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
+        ImageView imageView;
+
+        public DownloadImageFromInternet(ImageView imageView) {
+            this.imageView = imageView;
+            Toast.makeText(getApplicationContext(), "Please wait, it may take a few minute...", Toast.LENGTH_SHORT).show();
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String imageURL = urls[0];
+            Bitmap bimage = null;
+            try {
+                InputStream in = new java.net.URL(imageURL).openStream();
+                bimage = BitmapFactory.decodeStream(in);
+
+            } catch (Exception e) {
+                Log.e("Error Message", e.getMessage());
+                e.printStackTrace();
+            }
+            return bimage;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
     }
 
 }

@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
     public void onClickLogin(View v) {
         usernameStr = username.toString();
         passwordStr = password.toString();
-        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
-        intent.putExtra("username",usernameStr);
+//        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
+//        intent.putExtra("username",usernameStr);
 
         final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
@@ -77,14 +77,12 @@ public class MainActivity extends AppCompatActivity {
                         boolean answer = true;
                         Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
                         String token = "";
-                        String email = "";
                         try {
                             JSONObject obj = new JSONObject(response);
                             if(!obj.getBoolean("answer"))
                                 answer = false;
                             else {
                                 token = obj.getString("basicAuthToken");
-                                email = obj.getString("email");
                             }
 
                         }
@@ -96,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, Experiments.class);
                             SharedPreferences.Editor editor = pref.edit();
                             editor.putString("token",token);
-                            editor.putString("email",email);
                             editor.commit();
                             intent.putExtra("token",token);
                             startActivity(intent);
