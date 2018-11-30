@@ -45,6 +45,7 @@ public class Menu extends AppCompatActivity {
     private String LLAVE_IMAGEN = "imagen";
     private String LLAVE_NOMBRE = "nombre";
     private String LLAVE_ID_EXPERIMENTO = "experimento_id";
+    String nombre;
 
     String mCurrentPhotoPath;
     int READ_REQUEST_CODE = 42;
@@ -114,76 +115,80 @@ public class Menu extends AppCompatActivity {
         }
     }
     public void subirImagen(View v) {
+        // Obtenemos el nombre de la imagen
+        nombre = editarNombre.getText().toString().trim();
         // Mostramos una barra de progreso
-        final ProgressDialog cargadno = ProgressDialog.show(this, "Subiendo imagen...", "Subiendo...", false, false);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        // Cerramos la barra de progreso
-                        cargadno.dismiss();
-                        // Mostramos un mensaje como respuesta
-                        Toast.makeText(Menu.this, s, Toast.LENGTH_SHORT).show();
-                        String token = "";
-                        int imgId = -1;
-                        Boolean answer = true;
-                        try {
-                            JSONObject obj = new JSONObject(s);
-                            if(!obj.getBoolean("answer"))
+        if(!nombre.equals("")) {
+            final ProgressDialog cargadno = ProgressDialog.show(this, "Subiendo imagen...", "Subiendo...", false, false);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String s) {
+                            // Cerramos la barra de progreso
+                            cargadno.dismiss();
+                            // Mostramos un mensaje como respuesta
+                            Toast.makeText(Menu.this, s, Toast.LENGTH_SHORT).show();
+                            String token = "";
+                            int imgId = -1;
+                            Boolean answer = true;
+                            try {
+                                JSONObject obj = new JSONObject(s);
+                                if (!obj.getBoolean("answer"))
+                                    answer = false;
+                                else
+                                    imgId = obj.getInt("data");
+                            } catch (Exception e) {
                                 answer = false;
-                            else
-                               imgId= obj.getInt("data");
+                            }
+                            if (answer) {
+                                Toast.makeText(Menu.this, "imagen mandada", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(Menu.this, ImageData.class);
+                                intent.putExtra("id", String.valueOf(imgId));
+                                startActivity(intent);
+                            }
                         }
-                        catch(Exception e) {
-                            answer = false;
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            // Cerramos el dialogo de la barra de progreso
+                            cargadno.dismiss();
+
+                            // Monstramos el mensaje de error
+                            Toast.makeText(Menu.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                        if(answer) {
-                            Toast.makeText(Menu.this, "imagen mandada", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(Menu.this,ImageData.class);
-                            intent.putExtra("id",String.valueOf(imgId));
-                            startActivity(intent);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        // Cerramos el dialogo de la barra de progreso
-                        cargadno.dismiss();
-
-                        // Monstramos el mensaje de error
-                        Toast.makeText(Menu.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
+                    }) {
 
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Convertimos un Bitmap a un string de datos
-                String imagen = obtieneNombreImagen(bitmap);
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    // Convertimos un Bitmap a un string de datos
+                    String imagen = obtieneNombreImagen(bitmap);
 
-                // Obtenemos el nombre de la imagen
-                String nombre = editarNombre.getText().toString().trim();
 
-                // Creamos un mapa para los parametros
-                Map<String, String> params = new Hashtable<String, String>();
+                    // Creamos un mapa para los parametros
+                    Map<String, String> params = new Hashtable<String, String>();
 
-                // Le enexamos los parametros
-                params.put(LLAVE_IMAGEN, imagen);
-                params.put(LLAVE_NOMBRE, nombre);
-                params.put(LLAVE_ID_EXPERIMENTO,getIntent().getExtras().getString("id"));
+                    // Le enexamos los parametros
+                    params.put(LLAVE_IMAGEN, imagen);
+                    params.put(LLAVE_NOMBRE, nombre);
+                    params.put(LLAVE_ID_EXPERIMENTO, getIntent().getExtras().getString("id"));
 
-                // regresamos los parametros
-                return params;
-            }
-        };
+                    // regresamos los parametros
+                    return params;
+                }
+            };
 
-        // Usamos Volley para crear la cola de peticiones
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+            // Usamos Volley para crear la cola de peticiones
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        // Anexamos el request a la cola
-        requestQueue.add(stringRequest);
+            // Anexamos el request a la cola
+            requestQueue.add(stringRequest);
+        }
+        else {
+            Toast.makeText(Menu.this, "Nombre es obligatorio", Toast.LENGTH_LONG).show();
+        }
     }
     private File createImageFile() throws IOException {
         // Create an image file name

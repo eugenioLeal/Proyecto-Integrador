@@ -61,87 +61,91 @@ public class MainActivity extends AppCompatActivity {
         adaptadorDB.open();
     }
     public void onClickLogin(View v) {
-        usernameStr = username.toString();
-        passwordStr = password.toString();
+        usernameStr = username.toString().trim();
+        passwordStr = password.toString().trim();
 //        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
 //        intent.putExtra("username",usernameStr);
+        if(!usernameStr.equals("") && !passwordStr.equals("")) {
 
-        final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Cerramos la barra de progreso
-                        cargadno.dismiss();
-                        // Mostramos un mensaje como respuesta
-                        boolean answer = true;
-                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
-                        String token = "";
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            if(!obj.getBoolean("answer"))
+            final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // Cerramos la barra de progreso
+                            cargadno.dismiss();
+                            // Mostramos un mensaje como respuesta
+                            boolean answer = true;
+                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+                            String token = "";
+                            try {
+                                JSONObject obj = new JSONObject(response);
+                                if (!obj.getBoolean("answer"))
+                                    answer = false;
+                                else {
+                                    token = obj.getString("basicAuthToken");
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
                                 answer = false;
-                            else {
-                                token = obj.getString("basicAuthToken");
                             }
-
+                            if (answer) {
+                                Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(MainActivity.this, Experiments.class);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("token", token);
+                                editor.commit();
+                                intent.putExtra("token", token);
+                                startActivity(intent);
+                            }
                         }
-                        catch(Exception e) {
-                            e.printStackTrace();
-                            answer = false;
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            // Cerramos el dialogo de la barra de progreso
+                            cargadno.dismiss();
+
+                            // Monstramos el mensaje de error
+                            Toast.makeText(MainActivity.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                        if(answer) {
-                            Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(MainActivity.this, Experiments.class);
-                            SharedPreferences.Editor editor = pref.edit();
-                            editor.putString("token",token);
-                            editor.commit();
-                            intent.putExtra("token",token);
-                            startActivity(intent);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        // Cerramos el dialogo de la barra de progreso
-                        cargadno.dismiss();
+                    }) {
 
-                        // Monstramos el mensaje de error
-                        Toast.makeText(MainActivity.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    usernameStr = username.getText().toString();
+                    passwordStr = password.getText().toString();
+                    Map<String, String> params = new Hashtable<String, String>();
+                    // Le enexamos los parametros
+                    params.put(LLAVE_USER, usernameStr);
+                    params.put(LLAVE_PASS, passwordStr);
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                usernameStr = username.getText().toString();
-                passwordStr = password.getText().toString();
-                Map<String, String> params = new Hashtable<String, String>();
-                // Le enexamos los parametros
-                params.put(LLAVE_USER, usernameStr);
-                params.put(LLAVE_PASS, passwordStr);
+                    // regresamos los parametros
+                    return params;
+                }
+            };
 
-                // regresamos los parametros
-                return params;
-            }
-        };
+            // Usamos Volley para crear la cola de peticiones
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        // Usamos Volley para crear la cola de peticiones
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+            // Anexamos el request a la cola
+            requestQueue.add(stringRequest);
+            //        Toast.makeText(this,"Loggineando", Toast.LENGTH_SHORT).show();
 
-        // Anexamos el request a la cola
-        requestQueue.add(stringRequest);
-//        Toast.makeText(this,"Loggineando", Toast.LENGTH_SHORT).show();
-
-//        if (!adaptadorDB.login(usernameStr,passwordStr)) {
-//            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-//        } else {
-//            // Put Extras
-//            //----
-//            // Go to Menu
-//            Intent intent = new Intent(MainActivity.this, Experiments.class);
-//            startActivity(intent);
-//        }
+            //        if (!adaptadorDB.login(usernameStr,passwordStr)) {
+            //            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+            //        } else {
+            //            // Put Extras
+            //            //----
+            //            // Go to Menu
+            //            Intent intent = new Intent(MainActivity.this, Experiments.class);
+            //            startActivity(intent);
+            //        }
+        }
+        else {
+            Toast.makeText(MainActivity.this, "Llena todos los campos", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void register(View v) {
