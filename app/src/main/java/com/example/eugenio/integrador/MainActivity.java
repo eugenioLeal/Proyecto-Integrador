@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
     public void onClickLogin(View v) {
         usernameStr = username.toString();
         passwordStr = password.toString();
-        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
-        intent.putExtra("username",usernameStr);
+//        Intent intent = new Intent(MainActivity.this,CreateNewExperiment.class);
+//        intent.putExtra("username",usernameStr);
 
         final ProgressDialog cargadno = ProgressDialog.show(this, "Logineando...", "Logineando...", false, false);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         cargadno.dismiss();
 
                         // Monstramos el mensaje de error
-                        Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }) {
 

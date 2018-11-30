@@ -1,15 +1,21 @@
 package com.example.eugenio.integrador;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +33,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+
+import java.io.InputStream;
 
 public class ExperimentData extends AppCompatActivity {
     ListView listView;
@@ -41,7 +54,9 @@ public class ExperimentData extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_data);
+        //adapter
         listView = findViewById(R.id.list_view2);
+        //set adapter
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
     }
     public void onStart() {
@@ -66,6 +81,8 @@ public class ExperimentData extends AppCompatActivity {
                         String created_at;
                         String fecha, hora;
                         ArrayAdapter<Image> adapter;
+                        String imageUrl;
+                        ListView list =findViewById(R.id.list_view);
                         try {
                             Toast.makeText(ExperimentData.this, stringResponse, Toast.LENGTH_SHORT).show();
                             JSONObject response = new JSONObject(stringResponse);
@@ -82,32 +99,36 @@ public class ExperimentData extends AppCompatActivity {
                                 fecha = splitted[0];
                                 Log.d("fechaaaaaaa",fecha);
                                 hora = splitted[1];
-                                imageArr[i] = new Image(id,nombre,fecha,hora);
+                                imageUrl = iter.getString("url");
+                                imageArr[i] = new Image(id,nombre,fecha,hora,imageUrl);
                             }
-                            adapter = new ArrayAdapter<Image>(ExperimentData.this,
-                                    android.R.layout.simple_list_item_1, imageArr);
+                            String[] from = {"listview_image", "listview_title"};
+                            int[] to = {R.id.listview_image, R.id.listview_item_title};
+//                              dapter = new ArrayAdapter<Image>(ExperimentData.this,
+//                                    android.R.layout.simple_list_item_1, imageArr);
+                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
-                            listView.setAdapter(adapter);
+                            StrictMode.setThreadPolicy(policy);
+                            CustomAdapter simpleAdapter = new CustomAdapter(getBaseContext(),imageArr);
+
+                            listView.setAdapter(simpleAdapter);
                             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position,
                                                         long id) {
-
-                                    String item = ((TextView)view).getText().toString();
-
-                                    Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(ExperimentData.this,ImageData.class);
                                     int image_id = imageArr[position].id;
                                     Toast.makeText(ExperimentData.this,"mandar id:  "+image_id,Toast.LENGTH_SHORT).show();
 
                                     intent.putExtra("id", String.valueOf(image_id));
                                     startActivity(intent);
-
-
                                 }
                             });
                         } catch (JSONException e) {
+                            Log.d("tagggggg","error");
                             e.printStackTrace();
+                            Toast.makeText(ExperimentData.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+
                         }
 
                     }
@@ -137,13 +158,41 @@ public class ExperimentData extends AppCompatActivity {
 
         Toast.makeText(ExperimentData.this,"id recibido es: "+idExperimento,Toast.LENGTH_SHORT).show();
 
-    }
-    public void onClickAddImage(View view)
+   }
+
+   public void onClickAddImage(View view)
     {
         String idExperimento = getIntent().getExtras().getString("id");
         Intent intent = new Intent(ExperimentData.this,Menu.class);
         intent.putExtra("id", String.valueOf(idExperimento));
         startActivity(intent);
+    }
+
+    private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
+        ImageView imageView;
+
+        public DownloadImageFromInternet(ImageView imageView) {
+            this.imageView = imageView;
+            Toast.makeText(getApplicationContext(), "Please wait, it may take a few minute...", Toast.LENGTH_SHORT).show();
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String imageURL = urls[0];
+            Bitmap bimage = null;
+            try {
+                InputStream in = new java.net.URL(imageURL).openStream();
+                bimage = BitmapFactory.decodeStream(in);
+
+            } catch (Exception e) {
+                Log.e("Error Message", e.getMessage());
+                e.printStackTrace();
+            }
+            return bimage;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
     }
 
 }

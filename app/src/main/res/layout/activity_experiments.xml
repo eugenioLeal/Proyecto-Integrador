@@ -19,6 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:onClick="onClickCreate"
-        android:text="create new" />
+        android:text="nuevo experimento" />
 
 </LinearLayout>

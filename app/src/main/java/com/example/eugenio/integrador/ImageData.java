@@ -81,7 +81,8 @@ public class ImageData extends AppCompatActivity {
                                 colores[i]=Color.parseColor(object.getString("color"));
 
                             }
-                            BarDataSet barDataSet1 = new BarDataSet(yValues, "Valor ");
+                            BarDataSet barDataSet1 = new BarDataSet(yValues, "Colores");
+
                             barDataSet1.setColors(colores);
 
                             yAxis = new ArrayList<>();

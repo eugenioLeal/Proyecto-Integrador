@@ -12,13 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="experiment name"
+        android:hint="nombre de experimento"
         android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Crear" />
         android:onClick="onClickCreate"
         android:text="Create" />
 </LinearLayout>
