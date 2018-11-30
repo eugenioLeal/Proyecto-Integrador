@@ -78,6 +78,8 @@ public class Menu extends AppCompatActivity {
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 ex.printStackTrace();
+                Toast.makeText(Menu.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -102,6 +104,7 @@ public class Menu extends AppCompatActivity {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Toast.makeText(Menu.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -181,11 +184,8 @@ public class Menu extends AppCompatActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
+        File image = new File(Environment.getExternalStorageDirectory(),
+                imageFileName+".jpg"
         );
 
         // Save a file: path for use with ACTION_VIEW intents
