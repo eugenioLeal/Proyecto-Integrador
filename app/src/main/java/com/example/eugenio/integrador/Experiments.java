@@ -50,7 +50,7 @@ public class Experiments extends AppCompatActivity {
 
         // From service
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
+                (Request.Method.POST, url,null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {

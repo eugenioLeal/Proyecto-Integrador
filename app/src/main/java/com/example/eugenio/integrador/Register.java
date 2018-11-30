@@ -31,6 +31,7 @@ public class Register extends AppCompatActivity {
     String LLAVE_USER;
     String LLAVE_PASS;
     String LLAVE_EMAIL;
+    SharedPreferences sp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ public class Register extends AppCompatActivity {
         username = findViewById(R.id.new_username);
         password = findViewById(R.id.new_password);
         email = findViewById(R.id.new_email);
+        sp =  getApplicationContext().getSharedPreferences("crm", Context.MODE_PRIVATE);
     }
     public void onClickRegister(View v) {
 //        usernameStr = username.getText().toString();

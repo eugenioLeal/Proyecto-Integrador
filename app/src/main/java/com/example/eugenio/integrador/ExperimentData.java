@@ -46,6 +46,8 @@ public class ExperimentData extends AppCompatActivity {
                         JSONArray data;
                         int id;
                         String nombre;
+                        String created_at;
+                        String fecha, hora;
                         ArrayAdapter<Image> adapter;
                         try {
                             answer = response.getBoolean("answer");
@@ -55,7 +57,13 @@ public class ExperimentData extends AppCompatActivity {
                                 JSONObject iter = data.getJSONObject(i);
                                 id = iter.getInt("id");
                                 nombre = iter.getString("nombre");
-                                imageArr[i] = new Image(id,nombre);
+                                created_at = iter.getString("created_at");
+                                Log.d("created",created_at);
+                                String[] splitted = created_at.split(" ");
+                                fecha = splitted[0];
+                                Log.d("fechaaaaaaa",fecha);
+                                hora = splitted[1];
+                                imageArr[i] = new Image(id,nombre,fecha,hora);
                             }
                             adapter = new ArrayAdapter<Image>(ExperimentData.this,
                                     android.R.layout.simple_list_item_1, imageArr);
@@ -69,7 +77,7 @@ public class ExperimentData extends AppCompatActivity {
                                     String item = ((TextView)view).getText().toString();
 
                                     Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(ExperimentData.this,ExperimentData.class);
+                                    Intent intent = new Intent(ExperimentData.this,ImageData.class);
                                     Toast.makeText(ExperimentData.this,"mandar id:  "+id,Toast.LENGTH_SHORT).show();
 
                                     intent.putExtra("id", String.valueOf(id));

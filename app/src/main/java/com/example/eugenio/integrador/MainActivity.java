@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     AdaptadorDB adaptadorDB;
     String LLAVE_USER;
     String LLAVE_PASS;
+    SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
+        pref = getApplicationContext().getSharedPreferences("crm", Context.MODE_PRIVATE);
         username.setText(pref.getString("username","no user"));
         MICROSERVICIO = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/login.php";
         LLAVE_USER = "user";
@@ -76,12 +77,14 @@ public class MainActivity extends AppCompatActivity {
                         boolean answer = true;
                         Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
                         String token = "";
+                        String email = "";
                         try {
                             JSONObject obj = new JSONObject(response);
                             if(!obj.getBoolean("answer"))
                                 answer = false;
                             else {
                                 token = obj.getString("basicAuthToken");
+                                email = obj.getString("email");
                             }
 
                         }
@@ -91,6 +94,10 @@ public class MainActivity extends AppCompatActivity {
                         if(answer) {
                             Toast.makeText(MainActivity.this, token, Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(MainActivity.this, Experiments.class);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("token",token);
+                            editor.putString("email",email);
+                            editor.commit();
                             intent.putExtra("token",token);
                             startActivity(intent);
                         }
