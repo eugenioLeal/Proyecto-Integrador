@@ -46,14 +46,9 @@ public class Register extends AppCompatActivity {
         sp =  getApplicationContext().getSharedPreferences("crm", Context.MODE_PRIVATE);
     }
     public void onClickRegister(View v) {
-//        usernameStr = username.getText().toString();
-//        passwordStr = password.getText().toString();
-//        emailStr = email.getText().toString();
-//        adaptadorDB.insertaUsuario(emailStr,usernameStr,passwordStr);
-//        SharedPreferences sharedPref = getSharedPreferences("crm", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.putString("username",emailStr);
-//        editor.commit();
+        usernameStr = username.getText().toString();
+        passwordStr = password.getText().toString();
+        emailStr = email.getText().toString();
         // Mostramos una barra de progreso
         final ProgressDialog cargadno = ProgressDialog.show(this, "Registrando...", "Registrando...", false, false);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,

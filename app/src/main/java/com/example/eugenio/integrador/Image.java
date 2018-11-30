@@ -5,15 +5,17 @@ public class Image {
     public String name;
     public String fecha;
     public String hora;
+    public String image_url;
     public Image(){
 
     }
-    public Image(int id, String name, String fecha, String hora) {
+    public Image(int id, String name, String fecha, String hora,String image_url) {
         super();
         this.id = id;
         this.name = name;
         this.fecha = fecha;
         this.hora = hora;
+        this.image_url = image_url;
 
     }
 
