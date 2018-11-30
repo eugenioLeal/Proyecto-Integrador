@@ -6,16 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
+    
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="20dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="40dp"
         android:layout_weight="1"
         android:contentDescription="@string/logo"
-        app:srcCompat="@drawable/stoneblock" />
+        app:srcCompat="@drawable/thewheel" />
 
     <EditText
         android:id="@+id/username"
@@ -57,6 +57,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
         android:onClick="register"
-        android:text="register" />
+        android:text="register"
+        android:layout_marginBottom="30dp"/>
 
 </LinearLayout>

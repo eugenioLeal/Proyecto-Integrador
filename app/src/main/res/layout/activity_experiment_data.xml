@@ -8,18 +8,23 @@
     tools:context=".ExperimentData">
 
 
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:onClick="onClickAddImage"
-        android:text="Button" />
-
     <ListView
         android:id="@+id/list_view2"
         android:layout_width="match_parent"
-        android:layout_height="347dp"
-        android:layout_weight="1" />
-        android:text="@string/subirImagen" />
+        android:layout_height="405dp"
+        android:layout_weight="1">
+
+    </ListView>
+    <com.gc.materialdesign.views.ButtonRectangle
+        android:id="@+id/button8"
+        android:layout_width="wrap_content"
+        android:layout_height="10px"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:onClick="onClickAddImage"
+        android:text="Subir Imágen"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        />
+    />
 </LinearLayout>
