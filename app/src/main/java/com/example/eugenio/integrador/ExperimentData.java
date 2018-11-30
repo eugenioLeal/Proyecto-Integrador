@@ -125,6 +125,7 @@ public class ExperimentData extends AppCompatActivity {
                                 }
                             });
                         } catch (JSONException e) {
+                            Log.d("tagggggg","error");
                             e.printStackTrace();
                             Toast.makeText(ExperimentData.this,e.getMessage(),Toast.LENGTH_SHORT).show();
 

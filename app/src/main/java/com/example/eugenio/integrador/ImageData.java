@@ -60,7 +60,6 @@ public class ImageData extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("crm", 0);
         token = pref.getString("token",null);
 
-
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, url, new Response.Listener<String>() {
                     @Override
@@ -81,7 +80,8 @@ public class ImageData extends AppCompatActivity {
                                 colores[i]=Color.parseColor(object.getString("color"));
 
                             }
-                            BarDataSet barDataSet1 = new BarDataSet(yValues, "Valor ");
+                            BarDataSet barDataSet1 = new BarDataSet(yValues, "Colores");
+
                             barDataSet1.setColors(colores);
 
                             yAxis = new ArrayList<>();
@@ -91,7 +91,6 @@ public class ImageData extends AppCompatActivity {
                             chart.setData(data);
                             chart.animateXY(2000, 2000);
                             chart.invalidate();
-                            pd.hide();
                         }
                         catch(Exception e){
                             Log.d("s","Error: " + e.toString());

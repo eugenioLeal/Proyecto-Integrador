@@ -45,6 +45,7 @@ public class Menu extends AppCompatActivity {
     private String LLAVE_IMAGEN = "imagen";
     private String LLAVE_NOMBRE = "nombre";
     private String LLAVE_ID_EXPERIMENTO = "experimento_id";
+    String nombre;
 
     String mCurrentPhotoPath;
     int READ_REQUEST_CODE = 42;
@@ -58,7 +59,7 @@ public class Menu extends AppCompatActivity {
 
     }
     public void onClickCapture(View v) {
-        dispatchTakePictureIntent();
+        takePictureIntent();
     }
     // Simple version without saving image
     private void takePictureIntent() {
@@ -72,16 +73,22 @@ public class Menu extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
+            Log.d("foto","1");
             File photoFile = null;
             try {
+                Log.d("foto","2");
                 photoFile = createImageFile();
             } catch (IOException ex) {
+                Log.d("foto","3");
                 // Error occurred while creating the File
                 ex.printStackTrace();
+                Toast.makeText(Menu.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
+                Log.d("foto","4");
+               Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -92,107 +99,109 @@ public class Menu extends AppCompatActivity {
     @Override
     protected void onActivityResult(int codigoDeSolicitud, int codigoDeResultado, Intent datos) {
         super.onActivityResult(codigoDeSolicitud, codigoDeResultado, datos);
-
-        if (codigoDeSolicitud == SOLICITAR_REQUEST && codigoDeResultado == RESULT_OK && datos != null && datos.getData() != null) {
+        Log.d("foto","5");
+                Log.d("foto",String.valueOf(codigoDeSolicitud)+datos.toString()+datos.getData().toString());
+        if (codigoDeSolicitud == REQUEST_TAKE_PHOTO && datos != null && datos.getData() != null) {
             Uri filePath = datos.getData();
             try {
+                Log.d("foto","6");
                 //Getting the Bitmap from Gallery
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-
-
             } catch (IOException e) {
+                Log.d("foto","7");
                 e.printStackTrace();
+                Toast.makeText(Menu.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
     public void subirImagen(View v) {
+        // Obtenemos el nombre de la imagen
+        nombre = editarNombre.getText().toString().trim();
         // Mostramos una barra de progreso
-        final ProgressDialog cargadno = ProgressDialog.show(this, "Subiendo imagen...", "Subiendo...", false, false);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        // Cerramos la barra de progreso
-                        cargadno.dismiss();
-                        // Mostramos un mensaje como respuesta
-                        Toast.makeText(Menu.this, s, Toast.LENGTH_SHORT).show();
-                        String token = "";
-                        int imgId = -1;
-                        Boolean answer = true;
-                        try {
-                            JSONObject obj = new JSONObject(s);
-                            if(!obj.getBoolean("answer"))
+        if(!nombre.equals("")) {
+            final ProgressDialog cargadno = ProgressDialog.show(this, "Subiendo imagen...", "Subiendo...", false, false);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String s) {
+                            // Cerramos la barra de progreso
+                            cargadno.dismiss();
+                            // Mostramos un mensaje como respuesta
+                            Toast.makeText(Menu.this, s, Toast.LENGTH_SHORT).show();
+                            String token = "";
+                            int imgId = -1;
+                            Boolean answer = true;
+                            try {
+                                JSONObject obj = new JSONObject(s);
+                                if (!obj.getBoolean("answer"))
+                                    answer = false;
+                                else
+                                    imgId = obj.getInt("data");
+                            } catch (Exception e) {
                                 answer = false;
-                            else
-                               imgId= obj.getInt("data");
+                            }
+                            if (answer) {
+                                Toast.makeText(Menu.this, "imagen mandada", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(Menu.this, ImageData.class);
+                                intent.putExtra("id", String.valueOf(imgId));
+                                startActivity(intent);
+                            }
                         }
-                        catch(Exception e) {
-                            answer = false;
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            // Cerramos el dialogo de la barra de progreso
+                            cargadno.dismiss();
+
+                            // Monstramos el mensaje de error
+                            Toast.makeText(Menu.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                        if(answer) {
-                            Toast.makeText(Menu.this, "imagen mandada", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(Menu.this,ImageData.class);
-                            intent.putExtra("id",String.valueOf(imgId));
-                            startActivity(intent);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        // Cerramos el dialogo de la barra de progreso
-                        cargadno.dismiss();
-
-                        // Monstramos el mensaje de error
-                        Toast.makeText(Menu.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
+                    }) {
 
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                // Convertimos un Bitmap a un string de datos
-                String imagen = obtieneNombreImagen(bitmap);
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    // Convertimos un Bitmap a un string de datos
+                    String imagen = obtieneNombreImagen(bitmap);
 
-                // Obtenemos el nombre de la imagen
-                String nombre = editarNombre.getText().toString().trim();
 
-                // Creamos un mapa para los parametros
-                Map<String, String> params = new Hashtable<String, String>();
+                    // Creamos un mapa para los parametros
+                    Map<String, String> params = new Hashtable<String, String>();
 
-                // Le enexamos los parametros
-                params.put(LLAVE_IMAGEN, imagen);
-                params.put(LLAVE_NOMBRE, nombre);
-                params.put(LLAVE_ID_EXPERIMENTO,getIntent().getExtras().getString("id"));
+                    // Le enexamos los parametros
+                    params.put(LLAVE_IMAGEN, imagen);
+                    params.put(LLAVE_NOMBRE, nombre);
+                    params.put(LLAVE_ID_EXPERIMENTO, getIntent().getExtras().getString("id"));
 
-                // regresamos los parametros
-                return params;
-            }
-        };
+                    // regresamos los parametros
+                    return params;
+                }
+            };
 
-        // Usamos Volley para crear la cola de peticiones
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+            // Usamos Volley para crear la cola de peticiones
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        // Anexamos el request a la cola
-        requestQueue.add(stringRequest);
+            // Anexamos el request a la cola
+            requestQueue.add(stringRequest);
+        }
+        else {
+            Toast.makeText(Menu.this, "Nombre es obligatorio", Toast.LENGTH_LONG).show();
+        }
     }
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
+        File image = new File(Environment.getExternalStorageDirectory(),
+                imageFileName+".jpg"
         );
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
     public String obtieneNombreImagen(Bitmap mapadebits) {
         ByteArrayOutputStream imagen = new ByteArrayOutputStream();
         mapadebits.compress(Bitmap.CompressFormat.JPEG, 100, imagen);

@@ -49,9 +49,12 @@ public class Register extends AppCompatActivity {
         usernameStr = username.getText().toString();
         passwordStr = password.getText().toString();
         emailStr = email.getText().toString();
-        // Mostramos una barra de progreso
-        final ProgressDialog cargadno = ProgressDialog.show(this, "Registrando...", "Registrando...", false, false);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+        if (!usernameStr.equals("")
+                && !passwordStr.equals("")
+                && !emailStr.equals("")){
+            // Mostramos una barra de progreso
+            final ProgressDialog cargadno = ProgressDialog.show(this, "Registrando...", "Registrando...", false, false);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -63,14 +66,13 @@ public class Register extends AppCompatActivity {
                         Boolean answer = true;
                         try {
                             JSONObject obj = new JSONObject(response);
-                            if(!obj.getBoolean("answer"))
+                            if (!obj.getBoolean("answer"))
                                 answer = false;
-                        }
-                        catch(Exception e) {
+                        } catch (Exception e) {
                             answer = false;
                         }
-                        if(answer) {
-                            Intent intent = new Intent(Register.this,MainActivity.class);
+                        if (answer) {
+                            Intent intent = new Intent(Register.this, MainActivity.class);
                             startActivity(intent);
                         }
                     }
@@ -85,31 +87,34 @@ public class Register extends AppCompatActivity {
                         Toast.makeText(Register.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
                     }
                 }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    usernameStr = username.getText().toString();
+                    passwordStr = password.getText().toString();
+                    emailStr = email.getText().toString();
+                    Map<String, String> params = new Hashtable<String, String>();
+                    // Le enexamos los parametros
+                    params.put(LLAVE_USER, usernameStr);
+                    params.put(LLAVE_PASS, passwordStr);
+                    params.put(LLAVE_EMAIL, emailStr);
 
+                    // regresamos los parametros
+                    return params;
+                }
+            };
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                usernameStr = username.getText().toString();
-                passwordStr = password.getText().toString();
-                emailStr = email.getText().toString();
-                Map<String, String> params = new Hashtable<String, String>();
-                // Le enexamos los parametros
-                params.put(LLAVE_USER, usernameStr);
-                params.put(LLAVE_PASS, passwordStr);
-                params.put(LLAVE_EMAIL, emailStr);
+            // Usamos Volley para crear la cola de peticiones
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-                // regresamos los parametros
-                return params;
+            // Anexamos el request a la cola
+            requestQueue.add(stringRequest);
+                /*Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Register.this,MainActivity.class);
+                startActivity(intent);*/
             }
-        };
-
-        // Usamos Volley para crear la cola de peticiones
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        // Anexamos el request a la cola
-        requestQueue.add(stringRequest);
-        /*Toast.makeText(this,"Datos de contacto guardados", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(Register.this,MainActivity.class);
-        startActivity(intent);*/
+        else
+        {
+            Toast.makeText(Register.this, "Rellene todos los campos", Toast.LENGTH_LONG).show();
+        }
     }
 }

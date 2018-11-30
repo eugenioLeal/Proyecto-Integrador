@@ -39,56 +39,59 @@ public class CreateNewExperiment extends AppCompatActivity {
         Toast.makeText(this, token, Toast.LENGTH_SHORT).show();
     }
     public void onClickCreate(View v) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Mostramos un mensaje como respuesta
-                        Toast.makeText(CreateNewExperiment.this, response, Toast.LENGTH_LONG).show();
-                        String token = "";
-                        Boolean answer = true;
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            if(!obj.getBoolean("answer"))
+        nombre = nombreEdit.getText().toString().trim();
+        if(!nombre.equals("")) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, MICROSERVICIO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // Mostramos un mensaje como respuesta
+                            Toast.makeText(CreateNewExperiment.this, response, Toast.LENGTH_LONG).show();
+                            String token = "";
+                            Boolean answer = true;
+                            try {
+                                JSONObject obj = new JSONObject(response);
+                                if (!obj.getBoolean("answer"))
+                                    answer = false;
+                            } catch (Exception e) {
+                                Toast.makeText(CreateNewExperiment.this, e.getMessage(), Toast.LENGTH_LONG).show();
                                 answer = false;
+                            }
+                            if (answer) {
+                                Intent intent = new Intent(CreateNewExperiment.this, Experiments.class);
+                                startActivity(intent);
+                            }
                         }
-                        catch(Exception e) {
-                            Toast.makeText(CreateNewExperiment.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            answer = false;
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+
+                            // Monstramos el mensaje de error
+                            Toast.makeText(CreateNewExperiment.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                        if(answer) {
-                            Intent intent = new Intent(CreateNewExperiment.this,Experiments.class);
-                            startActivity(intent);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-
-                        // Monstramos el mensaje de error
-                        Toast.makeText(CreateNewExperiment.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
+                    }) {
 
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                nombre = nombreEdit.getText().toString();
-                Map<String, String> params = new Hashtable<String, String>();
-                // Le enexamos los parametros
-                params.put("nombre", nombre);
-                params.put("token", token);
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new Hashtable<String, String>();
+                    // Le enexamos los parametros
+                    params.put("nombre", nombre);
+                    params.put("token", token);
 
-                // regresamos los parametros
-                return params;
-            }
-        };
+                    // regresamos los parametros
+                    return params;
+                }
+            };
+            // Usamos Volley para crear la cola de peticiones
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        // Usamos Volley para crear la cola de peticiones
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        // Anexamos el request a la cola
-        requestQueue.add(stringRequest);
+            // Anexamos el request a la cola
+            requestQueue.add(stringRequest);
+        }
+        else {
+            Toast.makeText(this, "Rellene el nombre", Toast.LENGTH_SHORT).show();
+        }
     }
 }
