@@ -87,6 +87,7 @@ public class ExperimentData extends AppCompatActivity {
                                 }
                             });
                         } catch (JSONException e) {
+                            Log.d("tagggggg","error");
                             e.printStackTrace();
                         }
 

@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                                 answer = false;
                             else {
                                 token = obj.getString("basicAuthToken");
-                                email = obj.getString("email");
                             }
 
                         }
@@ -96,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, Experiments.class);
                             SharedPreferences.Editor editor = pref.edit();
                             editor.putString("token",token);
-                            editor.putString("email",email);
                             editor.commit();
                             intent.putExtra("token",token);
                             startActivity(intent);
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         cargadno.dismiss();
 
                         // Monstramos el mensaje de error
-                        Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, volleyError.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }) {
 

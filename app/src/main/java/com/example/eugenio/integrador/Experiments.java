@@ -1,6 +1,7 @@
 package com.example.eugenio.integrador;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,9 +43,13 @@ public class Experiments extends AppCompatActivity {
         listView = findViewById(R.id.list_view);
         queue = com.android.volley.toolbox.Volley.newRequestQueue(this);
 
+        SharedPreferences mPrefs = getSharedPreferences("crm", MODE_PRIVATE); //add key
+
+        token = mPrefs.getString("token",null);
+        Toast.makeText(Experiments.this, "el token de sharedPref es"+token,Toast.LENGTH_SHORT).show();
+
         url = "http://ubiquitous.csf.itesm.mx/~pddm-1022983/services/Subir/experimentosHard.php";
-        Bundle bundle = getIntent().getExtras();
-        token = bundle.getString("token");
+
         Toast.makeText(this, token, Toast.LENGTH_SHORT).show();
         Log.d("tag",token);
 
