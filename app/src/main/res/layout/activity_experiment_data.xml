@@ -13,5 +13,5 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:onClick="onClickAddImage"
-        android:text="Button" />
+        android:text="@string/subirImagen" />
 </LinearLayout>
